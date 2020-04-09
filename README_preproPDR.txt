@@ -1,0 +1,16 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1504\cocoasubrtf820
+{\fonttbl\f0\froman\fcharset0 Times-Roman;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red0\green0\blue233;}
+{\*\expandedcolortbl;;\cssrgb\c0\c0\c0;\cssrgb\c0\c0\c93333;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww10800\viewh8400\viewkind0
+\deftab720
+\pard\pardeftab720\sl280\partightenfactor0
+
+\f0\fs24 \cf2 \expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 1) Identify data in the trace with no data (in matlab there are NaN).\'a0\
+2) Remove 100ms before and after the edges of the NaN - this makes sure that all the artifacts of the pupil size algorithm are removed, and is standard in eye tracking research (see {\field{\*\fldinst{HYPERLINK "http://jov.arvojournals.org/article.aspx?articleid=2193211"}}{\fldrslt \cf3 \ul \ulc3 \strokec3 http://jov.arvojournals.org/article.aspx?articleid=2193211}}\'a0for one of the first papers to do this - although they used a 200ms removal as they had an older eye tracker with slower sample rate).\'a0\
+3) For each blink, four equally spaced time points are required to interpolate the missing data. t2 is the blink onset; t3 is the blink offset; t1=t2-t3+t2; t4=t3-t2+t3. Based on these four time points and the associated pupil sizes (from the original, unsmoothed signal), a cubic-spline fit is generated (using the interp1 function in MATLAB with cubic spline). The original signal between t2 and t3 is replaced by the cubic spline. Thus, the signal is left unchanged, except for the blink period.\
+4) Any random sample artifacts are removed using a median Hampel filter.\
+5) Data are smoothed using a\'a0Savitzky-Golay Filter over an 11ms timeframe. This removes the high-frequency noise in the pupil data without time-delaying the pupil signal (which would occur when low pass filtering or using a simple moving average).\'a0\'a0\
+6) Signal is baselined against the median pupil size in the 200ms leading up to the onset of the melody (given that we have 1000ms before each trial I may expand this to 400ms to give better baseline removal - so that each trace is better centred around 0 at the onset of the stimulus).\'a0\
+}
